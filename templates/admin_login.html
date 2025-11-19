@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Canteen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</head>
+<body class="admin-body">
+    <div class="admin-login-container animate__animated animate__fadeIn">
+        <div class="admin-login-card">
+            <div class="admin-login-header">
+                <h1>🔐 Admin Login</h1>
+                <p>Canteen Management System</p>
+            </div>
+            
+            {% if error %}
+            <div class="alert alert-danger animate__animated animate__shakeX">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" class="admin-login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" required autofocus>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+
+            <div class="admin-login-footer">
+                <p>Default credentials: admin / admin123</p>
+                <a href="{{ url_for('index') }}">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

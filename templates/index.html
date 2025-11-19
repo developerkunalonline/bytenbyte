@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Canteen Ordering System{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content animate__animated animate__fadeInUp">
+        <h1 class="hero-title">Welcome to Our Canteen</h1>
+        <p class="hero-subtitle">Delicious food, quick service, amazing experience</p>
+        <a href="{{ url_for('menu') }}" class="btn btn-primary btn-large">
+            Order Now 🍴
+        </a>
+    </div>
+    <div class="hero-bg-shape shape-1"></div>
+    <div class="hero-bg-shape shape-2"></div>
+    <div class="hero-bg-shape shape-3"></div>
+</div>
+
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title animate__animated animate__fadeInUp">Why Choose Us?</h2>
+        <div class="features-grid">
+            <div class="feature-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+                <div class="feature-icon">🚀</div>
+                <h3>Fast Service</h3>
+                <p>Quick order processing and delivery</p>
+            </div>
+            <div class="feature-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                <div class="feature-icon">🍽️</div>
+                <h3>Quality Food</h3>
+                <p>Fresh and delicious meals every day</p>
+            </div>
+            <div class="feature-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+                <div class="feature-icon">💰</div>
+                <h3>Best Prices</h3>
+                <p>Affordable rates for everyone</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

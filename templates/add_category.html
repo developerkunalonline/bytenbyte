@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Category - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</head>
+<body>
+    <nav class="admin-navbar">
+        <div class="container">
+            <div class="nav-brand">🍽️ Canteen Admin</div>
+            <div class="admin-user">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-small btn-secondary">← Back</a>
+                <a href="{{ url_for('admin_logout') }}" class="btn btn-small btn-danger">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-form-container animate__animated animate__fadeIn">
+            <h1>Add New Category</h1>
+            
+            {% if error %}
+            <div class="alert alert-danger animate__animated animate__shakeX">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" class="admin-form">
+                <div class="form-group">
+                    <label for="name">Category Name</label>
+                    <input type="text" id="name" name="name" class="form-control" required autofocus placeholder="e.g., Snacks, Drinks">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Add Category</button>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

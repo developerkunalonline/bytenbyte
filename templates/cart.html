@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Cart - Canteen Ordering System{% endblock %}
+
+{% block content %}
+<div class="cart-header">
+    <div class="container">
+        <h1 class="page-title animate__animated animate__fadeInDown">Your Cart</h1>
+    </div>
+</div>
+
+<section class="cart-section">
+    <div class="container">
+        <div class="cart-content">
+            <div class="cart-items" id="cart-items">
+            </div>
+
+            <div class="cart-summary">
+                <div class="summary-card">
+                    <h2>Order Summary</h2>
+                    
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label for="customer-name" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Your Name *</label>
+                        <input type="text" id="customer-name" class="form-control" placeholder="Enter your name" required style="width: 100%; padding: 0.75rem; border: 2px solid #f8f9fa; border-radius: 10px; font-size: 1rem;">
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">₹0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>CGST (2.5%):</span>
+                        <span id="cgst">₹0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>SGST (2.5%):</span>
+                        <span id="sgst">₹0.00</span>
+                    </div>
+                    <hr>
+                    <div class="summary-row summary-total">
+                        <span>Total:</span>
+                        <span id="total">₹0.00</span>
+                    </div>
+                    <button class="btn btn-primary btn-block" id="place-order-btn">
+                        Place Order
+                    </button>
+                    <a href="{{ url_for('menu') }}" class="btn btn-secondary btn-block">
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="empty-cart" class="empty-cart" style="display: none;">
+            <div class="empty-cart-icon">🛒</div>
+            <h2>Your cart is empty</h2>
+            <p>Add some delicious items from our menu!</p>
+            <a href="{{ url_for('menu') }}" class="btn btn-primary">Browse Menu</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+{% endblock %}

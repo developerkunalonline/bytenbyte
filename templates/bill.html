@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Invoice - Order #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="bill-header">
+    <div class="container">
+        <h1 class="page-title animate__animated animate__fadeInDown">Order Invoice</h1>
+    </div>
+</div>
+
+<section class="bill-section">
+    <div class="container">
+        <div class="bill-container animate__animated animate__fadeInUp">
+            <div class="bill-header-info">
+                <h2>🍽️ Canteen Ordering System</h2>
+                <p>Order ID: <strong>#{{ order.id }}</strong></p>
+                <p>Customer Name: <strong>{{ order.customer_name }}</strong></p>
+                <p>Date & Time: <strong>{{ order.datetime }}</strong></p>
+            </div>
+
+            <div class="bill-items">
+                <table class="bill-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.order_items %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>₹{{ "%.2f"|format(item.price) }}</td>
+                            <td>₹{{ "%.2f"|format(item.total) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bill-summary">
+                <div class="bill-summary-row">
+                    <span>Subtotal:</span>
+                    <span>₹{{ "%.2f"|format(order.subtotal) }}</span>
+                </div>
+                <div class="bill-summary-row">
+                    <span>CGST (2.5%):</span>
+                    <span>₹{{ "%.2f"|format(order.tax / 2) }}</span>
+                </div>
+                <div class="bill-summary-row">
+                    <span>SGST (2.5%):</span>
+                    <span>₹{{ "%.2f"|format(order.tax / 2) }}</span>
+                </div>
+                <hr>
+                <div class="bill-summary-row bill-total">
+                    <span>Grand Total:</span>
+                    <span>₹{{ "%.2f"|format(order.total) }}</span>
+                </div>
+            </div>
+
+            <div class="bill-footer">
+                <p>Thank you for your order!</p>
+                <p>Visit us again! 😊</p>
+                <img src="/static/images/sign.png" alt="Signature" style="width: 150px; margin-top: 10px;">
+                <br>
+                <div class="signature-line">
+                    <span>Authorized Signature</span>
+                </div>
+            </div>
+
+            <div class="bill-actions">
+                <button class="btn btn-primary" onclick="window.print()">
+                    🖨️ Print Bill
+                </button>
+                <a href="{{ url_for('download_bill', order_id=order.id) }}" class="btn btn-secondary">
+                    📥 Download PDF
+                </a>
+                <a href="{{ url_for('menu') }}" class="btn btn-success">
+                    🍴 Order Again
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    @media print {
+        .navbar, .footer, .bill-actions {
+            display: none !important;
+        }
+        
+        .bill-container {
+            box-shadow: none;
+            padding: 20px;
+        }
+    }
+</style>
+{% endblock %}

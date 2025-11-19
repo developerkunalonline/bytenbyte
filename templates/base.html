@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Canteen Ordering System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</head>
+<body>
+    {% if not request.path.startswith('/admin') %}
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand animate__animated animate__fadeInLeft">
+                🍽️ Byte and Byte
+            </div>
+            <ul class="nav-menu animate__animated animate__fadeInRight">
+                <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+                <li><a href="{{ url_for('menu') }}" class="nav-link">Menu</a></li>
+                <li><a href="{{ url_for('cart') }}" class="nav-link cart-link">
+                    Cart <span class="cart-badge" id="cart-count">0</span>
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Canteen Ordering System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Update cart count in navbar
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartBadge = document.getElementById('cart-count');
+            if (cartBadge) {
+                cartBadge.textContent = totalItems;
+                cartBadge.style.display = totalItems > 0 ? 'inline-block' : 'none';
+            }
+        }
+
+        // Update cart count on page load
+        document.addEventListener('DOMContentLoaded', updateCartCount);
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

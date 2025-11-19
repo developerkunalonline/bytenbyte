@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Menu - Canteen Ordering System{% endblock %}
+
+{% block content %}
+<div class="menu-header">
+    <div class="container">
+        <h1 class="page-title animate__animated animate__fadeInDown">Our Menu</h1>
+        <p class="page-subtitle animate__animated animate__fadeInUp">Choose from our delicious selection</p>
+    </div>
+</div>
+
+<section class="menu-section">
+    <div class="container">
+        <div class="category-filter animate__animated animate__fadeInUp">
+            <button class="filter-btn active" data-category="all">All</button>
+            {% for category in categories %}
+            <button class="filter-btn" data-category="{{ category.id }}">{{ category.name }}</button>
+            {% endfor %}
+        </div>
+
+        <div class="menu-grid">
+            {% for item in items %}
+            <div class="menu-card animate__animated animate__fadeInUp" data-category="{{ item.category_id }}">
+                <div class="menu-card-image">
+                    <img src="{{ item.image or 'https://via.placeholder.com/300x200?text=' + item.name }}" alt="{{ item.name }}">
+                    <div class="menu-card-overlay">
+                        <span class="category-tag">{{ item.category_name }}</span>
+                    </div>
+                </div>
+                <div class="menu-card-body">
+                    <h3 class="menu-item-name">{{ item.name }}</h3>
+                    <div class="menu-item-footer">
+                        <span class="menu-item-price">₹{{ "%.2f"|format(item.price) }}</span>
+                        <button class="btn btn-primary btn-add-to-cart" 
+                                data-id="{{ item.id }}" 
+                                data-name="{{ item.name }}" 
+                                data-price="{{ item.price }}"
+                                data-image="{{ item.image }}">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Category Filter
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const menuCards = document.querySelectorAll('.menu-card');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove active class from all buttons
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const category = btn.dataset.category;
+
+            menuCards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                    card.classList.remove('animate__fadeOut');
+                    card.classList.add('animate__fadeIn');
+                } else {
+                    card.classList.remove('animate__fadeIn');
+                    card.classList.add('animate__fadeOut');
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 500);
+                }
+            });
+        });
+    });
+
+    // Add to Cart Functionality
+    const addToCartBtns = document.querySelectorAll('.btn-add-to-cart');
+
+    addToCartBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const item = {
+                id: btn.dataset.id,
+                name: btn.dataset.name,
+                price: parseFloat(btn.dataset.price),
+                image: btn.dataset.image,
+                quantity: 1
+            };
+
+            addItemToCart(item);
+            
+            // Visual feedback
+            btn.textContent = '✓ Added';
+            btn.style.backgroundColor = '#4ecdc4';
+            setTimeout(() => {
+                btn.textContent = 'Add to Cart';
+                btn.style.backgroundColor = '';
+            }, 1000);
+        });
+    });
+
+    function addItemToCart(item) {
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        
+        const existingItem = cart.find(i => i.id === item.id);
+        
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push(item);
+        }
+        
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+    }
+</script>
+{% endblock %}
