@@ -125,14 +125,15 @@ function placeOrder() {
     }
     
     const customerNameInput = document.getElementById('customer-name');
-    const customerName = customerNameInput ? customerNameInput.value.trim() : '';
+    let customerName = '';
     
-    if (!customerName) {
-        alert('Please enter your name!');
-        if (customerNameInput) {
+    if (customerNameInput) {
+        customerName = customerNameInput.value.trim();
+        if (!customerName) {
+            alert('Please enter your name!');
             customerNameInput.focus();
+            return;
         }
-        return;
     }
     
     const totals = calculateTotals();
@@ -151,7 +152,7 @@ function placeOrder() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            customer_name: customerName,
+            customer_name: customerName || undefined,
             items: orderItems,
             subtotal: totals.subtotal,
             tax: totals.tax,

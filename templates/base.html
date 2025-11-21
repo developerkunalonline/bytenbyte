@@ -20,6 +20,13 @@
                 <li><a href="{{ url_for('cart') }}" class="nav-link cart-link">
                     Cart <span class="cart-badge" id="cart-count">0</span>
                 </a></li>
+                {% if session.user_logged_in %}
+                <li><a href="{{ url_for('user_profile') }}" class="nav-link">👤 {{ session.user_name }}</a></li>
+                <li><a href="{{ url_for('user_logout') }}" class="nav-link">Logout</a></li>
+                {% else %}
+                <li><a href="{{ url_for('user_login') }}" class="nav-link">Login</a></li>
+                <li><a href="{{ url_for('user_signup') }}" class="nav-link btn-signup">Sign Up</a></li>
+                {% endif %}
             </ul>
         </div>
     </nav>

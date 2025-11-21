@@ -19,10 +19,17 @@
                 <div class="summary-card">
                     <h2>Order Summary</h2>
                     
+                    {% if not session.user_logged_in %}
                     <div class="form-group" style="margin-bottom: 1.5rem;">
                         <label for="customer-name" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Your Name *</label>
                         <input type="text" id="customer-name" class="form-control" placeholder="Enter your name" required style="width: 100%; padding: 0.75rem; border: 2px solid #f8f9fa; border-radius: 10px; font-size: 1rem;">
                     </div>
+                    {% else %}
+                    <div class="user-info-display" style="margin-bottom: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 10px;">
+                        <p style="margin: 0; font-weight: 600; color: var(--dark);">Ordering as: {{ session.user_name }}</p>
+                        <p style="margin: 0; font-size: 0.875rem; color: var(--gray);">{{ session.user_email }}</p>
+                    </div>
+                    {% endif %}
                     
                     <div class="summary-row">
                         <span>Subtotal:</span>

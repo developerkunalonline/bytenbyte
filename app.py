@@ -53,14 +53,26 @@ def init_db():
     ''')
     
     cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )
+    ''')
+    
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS orders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
             customer_name TEXT NOT NULL,
             items TEXT NOT NULL,
             subtotal REAL NOT NULL,
             tax REAL NOT NULL,
             total REAL NOT NULL,
-            datetime TEXT NOT NULL
+            datetime TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
         )
     ''')
     
@@ -76,6 +88,14 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if 'admin_logged_in' not in session:
             return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_logged_in' not in session:
+            return redirect(url_for('user_login'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -107,6 +127,84 @@ def menu():
 def cart():
     return render_template('cart.html')
 
+@app.route('/user/signup', methods=['GET', 'POST'])
+def user_signup():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
+        if cursor.fetchone():
+            conn.close()
+            return render_template('user_signup.html', error='Email already registered')
+        
+        created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        try:
+            cursor.execute('INSERT INTO users (name, email, password, created_at) VALUES (?, ?, ?, ?)',
+                         (name, email, password, created_at))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('user_login', success='Account created successfully! Please login.'))
+        except Exception as e:
+            conn.close()
+            return render_template('user_signup.html', error='Registration failed. Please try again.')
+    
+    return render_template('user_signup.html')
+
+@app.route('/user/login', methods=['GET', 'POST'])
+def user_login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM users WHERE email = ? AND password = ?', (email, password))
+        user = cursor.fetchone()
+        conn.close()
+        
+        if user:
+            session['user_logged_in'] = True
+            session['user_id'] = user['id']
+            session['user_name'] = user['name']
+            session['user_email'] = user['email']
+            return redirect(url_for('menu'))
+        else:
+            return render_template('user_login.html', error='Invalid email or password')
+    
+    success_msg = request.args.get('success')
+    return render_template('user_login.html', success=success_msg)
+
+@app.route('/user/logout')
+def user_logout():
+    session.pop('user_logged_in', None)
+    session.pop('user_id', None)
+    session.pop('user_name', None)
+    session.pop('user_email', None)
+    return redirect(url_for('index'))
+
+@app.route('/user/profile')
+@login_required
+def user_profile():
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+        SELECT * FROM orders 
+        WHERE user_id = ? 
+        ORDER BY datetime DESC
+    ''', (session['user_id'],))
+    orders = cursor.fetchall()
+    
+    conn.close()
+    
+    return render_template('user_profile.html', orders=orders)
+
 @app.route('/place_order', methods=['POST'])
 def place_order():
     data = request.json
@@ -116,11 +214,15 @@ def place_order():
     
     order_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
+    user_id = session.get('user_id', None)
+    customer_name = data.get('customer_name', session.get('user_name', 'Guest'))
+    
     cursor.execute('''
-        INSERT INTO orders (customer_name, items, subtotal, tax, total, datetime)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO orders (user_id, customer_name, items, subtotal, tax, total, datetime)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     ''', (
-        data.get('customer_name', 'Guest'),
+        user_id,
+        customer_name,
         json.dumps(data['items']),
         data['subtotal'],
         data['tax'],

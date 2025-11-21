@@ -7,9 +7,20 @@
     <div class="hero-content animate__animated animate__fadeInUp">
         <h1 class="hero-title">Welcome to Our Canteen</h1>
         <p class="hero-subtitle">Delicious food, quick service, amazing experience</p>
+        {% if not session.user_logged_in %}
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{{ url_for('user_signup') }}" class="btn btn-success btn-large">
+                Sign Up Free 🎉
+            </a>
+            <a href="{{ url_for('menu') }}" class="btn btn-primary btn-large">
+                Order Now 🍴
+            </a>
+        </div>
+        {% else %}
         <a href="{{ url_for('menu') }}" class="btn btn-primary btn-large">
             Order Now 🍴
         </a>
+        {% endif %}
     </div>
     <div class="hero-bg-shape shape-1"></div>
     <div class="hero-bg-shape shape-2"></div>
